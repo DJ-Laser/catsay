@@ -8,24 +8,24 @@ edition = "2021"
 path = "src/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
-[dependencies.web-sys]
-version = "0.3.39"
-features = [
-  'Document',
-  'Element',
-  'HtmlElement',
-  'HtmlDivElement',
-  'Node',
-  'Window',
-  'CssStyleDeclaration',
-  'EventTarget',
-  'MessageEvent',
-]
-
-[dependencies]
+[target.'cfg(unix)'.dependencies]
 js-sys = "0.3.39"
 wasm-bindgen = "0.2.62"
 xterm-js-rs = { version = "0.1.0", features = ["xterm-addon-fit"] }
+web-sys = {
+  version = "0.3.39"
+  features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'HtmlDivElement',
+    'Node',
+    'Window',
+    'CssStyleDeclaration',
+    'EventTarget',
+    'MessageEvent',
+  ]
+}
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
