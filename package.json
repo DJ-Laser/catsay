@@ -1,6 +1,21 @@
 {
+  "name": "catsay-web",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
   "dependencies": {
-    "xterm": "^4.5.0",
-    "xterm-addon-fit": "^0.3.0"
+    "catsay": "file:./catsay/pkg",
+    "xterm-js": "^4.9.0"
+  },
+  "devDependencies": {
+    "vite": "^5.1.8",
+    "vite-plugin-top-level-await": "^1.4.4",
+    "vite-plugin-wasm": "^3.3.0"
+  },
+  "scripts": {
+    "wasm": "wasm-pack build ./catsay --target bundler",
+    "dev": "vite",
+    "build": "vite build"
   }
 }
