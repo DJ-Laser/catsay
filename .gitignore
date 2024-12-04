@@ -8,3 +8,4 @@ node_modules
 dist
 .cargo-ok
 package-lock.json
+.direnv
