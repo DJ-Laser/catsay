@@ -5,8 +5,11 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "catsay": "file:./catsay/pkg",
-    "xterm-js": "^4.9.0"
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "xterm-addon-fit": "npm:@xterm/addon-fit@^0.10.0",
+    "xterm": "npm:@xterm/xterm@^5.5.0",
+    "catsay": "file:./catsay/pkg"
   },
   "devDependencies": {
     "vite": "^5.1.8",

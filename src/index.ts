@@ -1,4 +1,6 @@
-import { greet } from "catsay";
+// @ts-ignore
+import * as wasm from "catsay";
+console.log("js ran")
 
-console.log("init wasm-pack");
-greet("from vite!");
+// Init wasm
+wasm;

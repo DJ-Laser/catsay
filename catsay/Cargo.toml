@@ -2,14 +2,30 @@
 name = "catsay"
 version = "0.1.0"
 authors = ["DJ_Laser"]
-edition = "2018"
+edition = "2021"
 
 [lib]
+path = "src/lib.rs"
 crate-type = ["cdylib", "rlib"]
 
+[dependencies.web-sys]
+version = "0.3.39"
+features = [
+  'Document',
+  'Element',
+  'HtmlElement',
+  'HtmlDivElement',
+  'Node',
+  'Window',
+  'CssStyleDeclaration',
+  'EventTarget',
+  'MessageEvent',
+]
+
 [dependencies]
-cfg-if = "1.0.0"
-wasm-bindgen = "0.2.63"
+js-sys = "0.3.39"
+wasm-bindgen = "0.2.62"
+xterm-js-rs = { version = "0.1.0", features = ["xterm-addon-fit"] }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -23,7 +39,6 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 #
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.5", optional = true }
-xterm-js-rs = "0.1.2"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
