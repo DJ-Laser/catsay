@@ -1,32 +1,31 @@
 [package]
 name = "catsay"
-version = "0.0.1"
+version = "0.1.0"
+authors = ["DJ_Laser"]
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib"]
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
 
-[features]
-default = ["console_error_panic_hook"]
-
-[dependencies.web-sys]
-version = "0.3.39"
-features = [
-  'Document',
-  'Element',
-  'HtmlElement',
-  'HtmlDivElement',
-  'Node',
-  'Window',
-  'CssStyleDeclaration',
-  'EventTarget',
-  'MessageEvent',
-]
-
-[dependencies]
-xterm-js-rs = { version = "0.1.0", features = ["xterm-addon-fit"] }
+[target.'cfg(unix)'.dependencies]
 js-sys = "0.3.39"
 wasm-bindgen = "0.2.62"
+xterm-js-rs = { version = "0.1.0", features = ["xterm-addon-fit"] }
+web-sys = {
+  version = "0.3.39"
+  features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'HtmlDivElement',
+    'Node',
+    'Window',
+    'CssStyleDeclaration',
+    'EventTarget',
+    'MessageEvent',
+  ]
+}
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -42,8 +41,12 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 wee_alloc = { version = "0.4.5", optional = true }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.12"
+wasm-bindgen-test = "0.3.13"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"
+
+[features]
+# default = ["console_error_panic_hook" ,"wee_alloc"]
+default = ["console_error_panic_hook"]
