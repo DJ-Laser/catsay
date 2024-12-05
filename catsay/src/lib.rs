@@ -5,7 +5,7 @@ mod options;
 pub use cats::*;
 pub use options::*;
 
-use rand::{seq::SliceRandom, thread_rng};
+use fastrand;
 use std::{cmp::min, iter};
 
 pub fn get_credits() -> String {
@@ -104,10 +104,10 @@ pub fn say(text: &str, options: &CatsayOptions) -> String {
   write_bubble(text, &mut bubble, bubble_width);
 
   let cat = match &options.cat {
-    CatChoice::Choice(cat) => &cat,
+    CatChoice::Choice(cat) => cat,
     CatChoice::Random => {
-      let mut rng = thread_rng();
-      Cat::CATS.choose(&mut rng).expect("")
+      let i = fastrand::usize(..Cat::CATS.len());
+      &Cat::CATS[i]
     }
   };
 

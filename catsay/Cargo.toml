@@ -4,5 +4,8 @@ version = "0.1.0"
 authors = ["DJ_Laser"]
 edition.workspace = true
 
+[features]
+
 [dependencies]
-rand = "0.8.5"
+fastrand = "2.2.0"
+
