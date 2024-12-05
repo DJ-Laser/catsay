@@ -17,7 +17,7 @@
     "vite-plugin-wasm": "^3.3.0"
   },
   "scripts": {
-    "wasm": "wasm-pack build ./catsay --target bundler",
+    "wasm": "wasm-pack build ./catsay_web --target bundler",
     "dev": "vite",
     "build": "vite build"
   }

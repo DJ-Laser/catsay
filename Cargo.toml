@@ -1,0 +1,6 @@
+[workspace]
+members = ["catsay", "catsay_web"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"

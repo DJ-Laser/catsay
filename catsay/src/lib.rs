@@ -1,6 +1,5 @@
 mod cats;
 mod options;
-mod web_term;
 
 pub use cats::*;
 pub use options::*;
