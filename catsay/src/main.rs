@@ -2,7 +2,7 @@ use std::env;
 use std::io::{self, IsTerminal, Read, Write};
 use std::string::FromUtf8Error;
 
-use catsay::say;
+use catsay::{get_help_text, say};
 
 #[derive(Debug)]
 pub enum CliError {
@@ -22,11 +22,6 @@ impl From<FromUtf8Error> for CliError {
   }
 }
 
-const HELP_TEXT: &str = "\
-Catsay written by DJ_Laser
-Usage: catsay <text>
-";
-
 pub fn main() -> Result<(), CliError> {
   // Discard argv0 (process path)
   let args = env::args().skip(1);
@@ -37,7 +32,7 @@ pub fn main() -> Result<(), CliError> {
 
   if args.len() == 0 {
     if io::stdin().is_terminal() {
-      stdout.write(HELP_TEXT.as_bytes())?;
+      stdout.write(get_help_text().as_bytes())?;
       return Ok(());
     }
 

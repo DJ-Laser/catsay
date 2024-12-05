@@ -2,7 +2,7 @@ use std::str::{self, from_utf8};
 
 pub struct Cat {
   pub name: &'static str,
-  pub desc: &'static str,
+  pub credit: &'static str,
   art: &'static str,
 }
 
@@ -17,7 +17,7 @@ impl Cat {
 const CATS: [Cat; 7] = [
   Cat {
     name: "peeking",
-    desc: "Peeking cat: Unknown Artist",
+    credit: "Peeking cat by Unknown Artist",
     art: r"
     |\__/,|   (`\
   _.|o o  |_   ) )
@@ -25,7 +25,7 @@ const CATS: [Cat; 7] = [
   },
   Cat {
     name: "sleeping",
-    desc: "Sleeping cat: Felix Lee",
+    credit: "Sleeping cat by Felix Lee",
     art: r"
       |\      _,,,---,,_
 ZZZzz /,`.-'`'    -.  ;-;;,_
@@ -34,7 +34,7 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
   },
   Cat {
     name: "surprised",
-    desc: "Surprised cat: Unknown Artist",
+    credit: "Surprised cat by Unknown Artist",
     art: r#"
  _._     _,-'""`-._
 (,-.`._,'(       |\`-/|
@@ -43,7 +43,7 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
   },
   Cat {
     name: "contented",
-    desc: "Contented cat: Unknown Artist",
+    credit: "Contented cat by Unknown Artist",
     art: r"
  |\__/,|   (`\
  |_ _  |.--.) )
@@ -52,7 +52,7 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
   },
   Cat {
     name: "playing",
-    desc: "Playing cat: Julie Rhodes",
+    credit: "Playing cat by Julie Rhodes",
     art: r"
     /\_/\           ___
    = o_o =_______    \ \  -Julie Rhodes-
@@ -61,7 +61,7 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
   },
   Cat {
     name: "hissing",
-    desc: "Hissing cat: Hayley Jane Wakenshaw",
+    credit: "Hissing cat by Hayley Jane Wakenshaw",
     art: r#"
         ,-""""""-.
      /\j__/\  (  \`--.
@@ -71,7 +71,7 @@ hjw  \`@_@'/  _)  >--.`.
   },
   Cat {
     name: "sitting",
-    desc: "Sitting cat: Unknown Artist",
+    credit: "Sitting cat by Unknown Artist",
     art: r#"
    |\---/|
    | ,_, |
