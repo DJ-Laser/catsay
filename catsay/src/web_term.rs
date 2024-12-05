@@ -26,32 +26,7 @@ const CURSOR_RIGHT: &str = "\x1b[C";
 pub fn main() -> Result<(), JsValue> {
   std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-  let terminal: Terminal = Terminal::new(
-    TerminalOptions::new()
-      .with_rows(50)
-      .with_cursor_blink(true)
-      .with_cursor_width(10)
-      .with_font_size(20)
-      .with_draw_bold_text_in_bright_colors(true)
-      .with_right_click_selects_word(true)
-      .with_theme(
-        Theme::new()
-          .with_foreground("#98FB98")
-          .with_background("#000000"),
-      ),
-  );
-
-  let elem = web_sys::window()
-    .unwrap()
-    .document()
-    .unwrap()
-    .get_element_by_id("terminal")
-    .unwrap();
-
-  terminal.writeln("Supported keys in this example: <Printable-Characters> <Enter> <Backspace> <Left-Arrow> <Right-Arrow> <Ctrl-C> <Ctrl-L>");
-  terminal.open(elem.dyn_into()?);
-  prompt(&terminal);
-
+  let terminal = setup_terminal()?;
   let mut line = String::new();
   let mut cursor_col = 0;
 
@@ -114,4 +89,33 @@ pub fn main() -> Result<(), JsValue> {
   terminal.focus();
 
   Ok(())
+}
+
+fn setup_terminal() -> Result<Terminal, JsValue> {
+  let terminal = Terminal::new(
+    TerminalOptions::new()
+      .with_rows(50)
+      .with_cursor_blink(true)
+      .with_cursor_width(10)
+      .with_font_size(20)
+      .with_draw_bold_text_in_bright_colors(true)
+      .with_right_click_selects_word(true)
+      .with_theme(
+        Theme::new()
+          .with_foreground("#98FB98")
+          .with_background("#000000"),
+      ),
+  );
+
+  let elem = web_sys::window()
+    .unwrap()
+    .document()
+    .unwrap()
+    .get_element_by_id("terminal")
+    .unwrap();
+
+  terminal.open(elem.dyn_into()?);
+  prompt(&terminal);
+
+  return Ok(terminal);
 }
