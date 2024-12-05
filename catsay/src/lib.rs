@@ -1,9 +1,15 @@
+pub mod cats;
+mod web_term;
+
 use std::{cmp::min, iter};
 
-mod web_term;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+pub const CREDITS: &str = "\
+Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats
+";
 
 pub struct CatsayOptions {
   max_bubble_width: Option<usize>,
@@ -33,14 +39,14 @@ impl BubbleVerticalLine {
       Self::Single => "< ",
       Self::Top => "/ ",
       Self::Middle => "| ",
-      Self::Bottom => r#"\ "#,
+      Self::Bottom => r"\ ",
     }
   }
 
   fn get_end(&self) -> &'static str {
     match self {
       Self::Single => " >",
-      Self::Top => r#" \"#,
+      Self::Top => r" \",
       Self::Middle => " |",
       Self::Bottom => " /",
     }
@@ -85,6 +91,9 @@ pub fn say(text: &str, options: &CatsayOptions) -> String {
   bubble.push_str(&"-".repeat(bubble_width + 2));
   bubble.push(' ');
 
+  for car in cats::CATS {
+    println!("{}", car.art);
+  }
   return bubble;
 }
 
