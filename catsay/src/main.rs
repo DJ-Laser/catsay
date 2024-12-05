@@ -2,7 +2,7 @@ use std::env;
 use std::io::{self, IsTerminal, Read, Write};
 use std::string::FromUtf8Error;
 
-use catsay::{say, CatsayOptions};
+use catsay::say;
 
 #[derive(Debug)]
 pub enum CliError {
@@ -31,7 +31,7 @@ pub fn main() -> Result<(), CliError> {
   // Discard argv0 (process path)
   let args = env::args().skip(1);
   // TODO: cli arg parsing
-  let options = CatsayOptions::DEFAULT;
+  let options = Default::default();
 
   let mut stdout = io::stdout().lock();
 

@@ -3,10 +3,18 @@ use std::str::{self, from_utf8};
 pub struct Cat {
   pub name: &'static str,
   pub desc: &'static str,
-  pub art: &'static str,
+  art: &'static str,
 }
 
-pub const CATS: [Cat; 7] = [
+impl Cat {
+  pub const CATS: &[Cat; 7] = &CATS;
+  pub fn get_art(&self) -> &'static str {
+    let bytes = &self.art.as_bytes()[1..];
+    return from_utf8(bytes).expect("Should be able to remove the leading newline");
+  }
+}
+
+const CATS: [Cat; 7] = [
   Cat {
     name: "peeking",
     desc: "Peeking cat: Unknown Artist",
@@ -73,10 +81,3 @@ hjw  \`@_@'/  _)  >--.`.
   (_,...'(_,.`__)/'.....+"#,
   },
 ];
-
-pub fn get_cat_art(index: usize) -> &'static str {
-  let art = CATS[index].art;
-  // Remove leading newline
-  let bytes = &art.as_bytes()[1..];
-  return str::from_utf8(bytes).expect("Should be able to remove the leading newline");
-}

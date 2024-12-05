@@ -1,30 +1,15 @@
-pub mod cats;
+mod cats;
+mod options;
 mod web_term;
 
-use std::{cmp::min, iter};
+pub use cats::*;
+pub use options::*;
 
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+use std::{cmp::min, iter};
 
 pub const CREDITS: &str = "\
 Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats
 ";
-
-pub struct CatsayOptions {
-  max_bubble_width: Option<usize>,
-}
-
-impl CatsayOptions {
-  pub const DEFAULT: CatsayOptions = CatsayOptions {
-    max_bubble_width: Some(40),
-  };
-
-  pub fn with_max_bubble_width(mut self, width: Option<usize>) -> Self {
-    self.max_bubble_width = width;
-    return self;
-  }
-}
 
 enum BubbleVerticalLine {
   Single,
@@ -91,12 +76,12 @@ pub fn say(text: &str, options: &CatsayOptions) -> String {
   bubble.push_str(&"-".repeat(bubble_width + 2));
   bubble.push(' ');
 
-  for car in cats::CATS {
-    println!("{}", car.art);
+  for car in Cat::CATS {
+    println!("{}", car.get_art());
   }
   return bubble;
 }
 
 pub fn say_default(text: &str) -> String {
-  return say(text, &CatsayOptions::DEFAULT);
+  return say(text, &Default::default());
 }

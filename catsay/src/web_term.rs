@@ -3,6 +3,10 @@ use wasm_bindgen::JsCast;
 use xterm_js_rs::addons::fit::FitAddon;
 use xterm_js_rs::{OnKeyEvent, Terminal, TerminalOptions, Theme};
 
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 const PROMPT: &str = "$ ";
 
 fn prompt(term: &Terminal) {
