@@ -1,0 +1,21 @@
+#!/usr/bin/awk -f
+
+# 
+length($0)>max {
+    max=length($0);
+}
+
+{
+    # Reverse the line...
+    for(i=length($0);i>0;i--) {
+        o[NR]=o[NR] substr($0,i,1);
+    }
+}
+
+END {
+    for(i=1;i<=NR;i++) {
+        # prepend the output with sufficient padding
+        fmt=sprintf("%%%ds%%s\n",max-length(o[i]));
+        printf(fmt,"",o[i]);
+    }
+}

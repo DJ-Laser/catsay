@@ -4,6 +4,7 @@ mod options;
 pub use cats::*;
 pub use options::*;
 
+use rand::{seq::SliceRandom, thread_rng};
 use std::{cmp::min, iter};
 
 pub fn get_credits() -> String {
@@ -56,21 +57,17 @@ impl BubbleVerticalLine {
   }
 }
 
-pub fn say(text: &str, options: &CatsayOptions) -> String {
+fn write_bubble(text: &str, buf: &mut String, bubble_width: usize) {
   let text_len = text.chars().count();
-  let bubble_width = match options.max_bubble_width {
-    Some(width) => min(text_len, width),
-    None => text_len,
-  };
 
   // Add one line if text / width has remainder, meaning it overflows using floor division
   let bubble_num_lines = text_len / bubble_width + min(text_len % bubble_width, 1);
 
-  let mut bubble = String::from(' ');
   // Top line
-  bubble.push_str(&"_".repeat(bubble_width + 2));
-  bubble.push(' ');
-  bubble.push('\n');
+  buf.push(' ');
+  buf.push_str(&"_".repeat(bubble_width + 2));
+  buf.push(' ');
+  buf.push('\n');
 
   // We want to use spaces to pad out the bubble if there are not enough chars
   let mut chars = text.chars().chain(iter::repeat(' '));
@@ -82,21 +79,43 @@ pub fn say(text: &str, options: &CatsayOptions) -> String {
       _ => BubbleVerticalLine::Middle,
     };
 
-    bubble.push_str(line_type.get_start());
+    buf.push_str(line_type.get_start());
     let line: String = chars.by_ref().take(bubble_width).collect();
-    bubble.push_str(&line);
-    bubble.push_str(line_type.get_end());
-    bubble.push('\n');
+    buf.push_str(&line);
+    buf.push_str(line_type.get_end());
+    buf.push('\n');
   }
 
   // Bottom "line"
-  bubble.push(' ');
-  bubble.push_str(&"-".repeat(bubble_width + 2));
-  bubble.push(' ');
+  buf.push(' ');
+  buf.push_str(&"-".repeat(bubble_width + 2));
+  buf.push(' ');
+}
 
-  for car in Cat::CATS {
-    println!("{}", car.get_art());
+pub fn say(text: &str, options: &CatsayOptions) -> String {
+  let text_len = text.chars().count();
+  let bubble_width = match options.max_bubble_width {
+    Some(width) => min(text_len, width),
+    None => text_len,
+  };
+
+  let mut bubble = String::new();
+  write_bubble(text, &mut bubble, bubble_width);
+
+  let cat = match &options.cat {
+    CatChoice::Choice(cat) => &cat,
+    CatChoice::Random => {
+      let mut rng = thread_rng();
+      Cat::CATS.choose(&mut rng).expect("")
+    }
+  };
+
+  for line in cat.get_art().lines() {
+    bubble.push('\n');
+    bubble.push_str(&" ".repeat(options.left_padding));
+    bubble.push_str(line);
   }
+
   return bubble;
 }
 
