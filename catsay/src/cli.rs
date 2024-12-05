@@ -1,7 +1,10 @@
+pub mod parser;
+
 use std::io::{self, Read, Write};
 use std::string::FromUtf8Error;
 
 use crate::{get_help_text, say};
+use parser::Cli;
 
 #[derive(Debug)]
 pub enum CliError {
@@ -22,7 +25,7 @@ impl From<FromUtf8Error> for CliError {
 }
 
 pub fn main<I, O, E>(
-  args: Vec<String>,
+  args: Cli,
   is_terminal: bool,
   mut stdin: I,
   mut stdout: O,
@@ -33,10 +36,9 @@ where
   O: Write,
   E: Write,
 {
-  // TODO: cli arg parsing
   let options = Default::default();
 
-  if args.len() == 0 {
+  if args.text.len() == 0 {
     if is_terminal {
       stdout.write(get_help_text().as_bytes())?;
       return Ok(());
@@ -51,7 +53,7 @@ where
     return Ok(());
   }
 
-  let text: String = args.join(" ");
+  let text: String = args.text.join(" ");
   stdout.write(say(&text, &options).as_bytes())?;
 
   Ok(())

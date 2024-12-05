@@ -1,4 +1,5 @@
 mod cats;
+#[cfg(feature = "cli")]
 pub mod cli;
 mod options;
 

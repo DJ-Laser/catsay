@@ -4,8 +4,14 @@ version = "0.1.0"
 authors = ["DJ_Laser"]
 edition.workspace = true
 
+[[bin]]
+name = "catsay"
+required-features = ["cli"]
+
 [features]
+cli = ["dep:clap"]
 
 [dependencies]
+clap = { version = "4.5.22", optional = true, features = ["derive"] }
 fastrand = "2.2.0"
 

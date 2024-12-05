@@ -9,7 +9,7 @@
     "@xterm/xterm": "^5.5.0",
     "xterm-addon-fit": "npm:@xterm/addon-fit@^0.10.0",
     "xterm": "npm:@xterm/xterm@^5.5.0",
-    "catsay": "file:./catsay/pkg"
+    "catsay_web": "file:./catsay_web/pkg"
   },
   "devDependencies": {
     "vite": "^5.1.8",
