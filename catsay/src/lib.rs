@@ -1,4 +1,5 @@
 mod cats;
+pub mod cli;
 mod options;
 
 pub use cats::*;
