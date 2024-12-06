@@ -96,14 +96,13 @@ pub fn main() -> Result<(), JsValue> {
     let event = e.dom_event();
     match event.key_code() {
       KEY_ENTER => {
-        if !line.is_empty() {
-          term.writeln("");
-          run_command(&line, &term);
-          line.clear();
-          line_len = 0;
-          cursor_col = 0;
-        }
         term.writeln("");
+        if !line.is_empty() {
+          run_command(&line, &term);
+        }
+        line.clear();
+        line_len = 0;
+        cursor_col = 0;
         prompt("", &term);
       }
       KEY_LEFT_ARROW => {
@@ -126,19 +125,18 @@ pub fn main() -> Result<(), JsValue> {
         cursor_col = 0;
       }
       KEY_BACKSPACE => {
-        let res = line.char_indices().nth(cursor_col);
+        let res = line.char_indices().nth(cursor_col - 1);
         if cursor_col > 0 {
-          if let Some((pos, _)) = res {
-            line.remove(pos);
-            line_len -= 1;
-            cursor_col -= 1;
+          let pos = res.expect("cursor_col should be valid").0;
+          line.remove(pos);
+          line_len -= 1;
+          cursor_col -= 1;
 
-            term.write(CLEAR_LINE);
-            prompt(
-              &(line.clone() + &CURSOR_LEFT.repeat(line_len - cursor_col)),
-              &term,
-            );
-          }
+          term.write(CLEAR_LINE);
+          prompt(
+            &(line.clone() + &CURSOR_LEFT.repeat(line_len - cursor_col)),
+            &term,
+          );
         }
       }
       _ => {
