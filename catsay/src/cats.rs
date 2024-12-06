@@ -1,17 +1,27 @@
 use std::str::{self, from_utf8};
 
-pub struct Cat {
-  pub name: &'static str,
-  pub credit: &'static str,
+pub struct Cat<'a> {
+  pub name: &'a str,
+  pub credit: &'a str,
   /// Contains a leading newline, use get_art for the trimmed version
-  pub art: &'static str,
+  pub art: &'a str,
 }
 
-impl Cat {
-  pub const CATS: &[Cat; 6] = &CATS;
-  pub fn get_art(&self) -> &'static str {
+impl<'a> Cat<'a> {
+  pub const CATS: &'static [Cat<'static>; 6] = &CATS;
+  pub fn get_art(&self) -> &str {
     let bytes = &self.art.as_bytes()[1..];
     return from_utf8(bytes).expect("Should be able to remove the leading newline");
+  }
+
+  pub fn get_cat(name: &str) -> Option<&'static Cat<'static>> {
+    for cat in Self::CATS {
+      if cat.name == name {
+        return Some(cat);
+      }
+    }
+
+    None
   }
 }
 

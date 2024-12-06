@@ -9,29 +9,6 @@ pub use options::*;
 use fastrand;
 use std::{cmp::min, iter};
 
-pub fn get_credits() -> String {
-  let mut credits =
-    String::from("Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats");
-  for cat in Cat::CATS {
-    credits.push('\n');
-    credits.push_str(&cat.credit);
-  }
-
-  return credits;
-}
-
-pub fn get_help_text() -> String {
-  let mut help_text = get_credits();
-  help_text.insert_str(
-    0,
-    "\
-Catsay written by DJ_Laser
-Usage: catsay <text>
-\n",
-  );
-  return help_text;
-}
-
 enum BubbleVerticalLine {
   Single,
   Top,

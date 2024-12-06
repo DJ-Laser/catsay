@@ -1,11 +1,13 @@
 use crate::Cat;
 
-pub enum CatChoice {
-  Choice(Cat),
+#[derive(Clone)]
+pub enum CatChoice<'a> {
+  Choice(&'a Cat<'a>),
   Random,
 }
 
-pub struct CatsayOptions {
+#[derive(Clone)]
+pub struct CatsayOptions<'a> {
   /// Maximum width of the speech bubble (does not include the +4 for padding and outline)
   pub max_bubble_width: Option<usize>,
   /// Where to place the bubble if it isn't long enough
@@ -13,10 +15,10 @@ pub struct CatsayOptions {
   /// Number of spaces to pad the cat from the left
   pub left_padding: usize,
   /// Cat art to use
-  pub cat: CatChoice,
+  pub cat: CatChoice<'a>,
 }
 
-impl Default for CatsayOptions {
+impl<'a> Default for CatsayOptions<'a> {
   fn default() -> Self {
     Self {
       max_bubble_width: Some(40),
@@ -27,7 +29,7 @@ impl Default for CatsayOptions {
   }
 }
 
-impl CatsayOptions {
+impl<'a> CatsayOptions<'a> {
   pub fn with_max_bubble_width(mut self, width: Option<usize>) -> Self {
     self.max_bubble_width = width;
     return self;
@@ -48,12 +50,12 @@ impl CatsayOptions {
     return self;
   }
 
-  pub fn with_cat(mut self, cat: Cat) -> Self {
+  pub fn with_cat(mut self, cat: &'a Cat<'a>) -> Self {
     self.cat = CatChoice::Choice(cat);
     return self;
   }
 
-  pub fn with_cat_choice(mut self, choice: CatChoice) -> Self {
+  pub fn with_cat_choice(mut self, choice: CatChoice<'a>) -> Self {
     self.cat = choice;
     return self;
   }
