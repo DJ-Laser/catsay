@@ -19,6 +19,7 @@
   "scripts": {
     "wasm": "wasm-pack build ./catsay_web --target bundler",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   }
 }
