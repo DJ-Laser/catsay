@@ -7,7 +7,7 @@ pub use cats::*;
 pub use options::*;
 
 use fastrand;
-use std::{cmp::min, iter};
+use std::{cmp::min, usize};
 
 enum BubbleVerticalLine {
   Single,
@@ -36,39 +36,77 @@ impl BubbleVerticalLine {
   }
 }
 
-fn write_bubble(text: &str, buf: &mut String, bubble_width: usize) {
-  let text_len = text.chars().count();
+fn write_bubble(text: &str, buf: &mut String, options: &CatsayOptions) {
+  let max_bubble_width = options.max_bubble_width.unwrap_or(usize::MAX);
+  let mut chars = text.chars();
+  let mut lines: Vec<String> = vec![String::new()];
+  let mut word = String::new();
 
-  // Add one line if text / width has remainder, meaning it overflows using floor division
-  let bubble_num_lines = text_len / bubble_width + min(text_len % bubble_width, 1);
+  let mut line_len = 0;
+  let mut word_len = 0;
 
-  // Top line
-  buf.push(' ');
-  buf.push_str(&"_".repeat(bubble_width + 2));
-  buf.push(' ');
-  buf.push('\n');
+  loop {
+    match chars.next() {
+      Some(w) if w.is_whitespace() => {
+        lines.last_mut().unwrap().push_str(&word);
+        line_len += word_len;
+        word.clear();
+        word_len = 0;
 
-  // We want to use spaces to pad out the bubble if there are not enough chars
-  let mut chars = text.chars().chain(iter::repeat(' '));
-  for i in 0..bubble_num_lines {
-    let line_type = match i {
-      0 if bubble_num_lines == 1 => BubbleVerticalLine::Single,
-      0 => BubbleVerticalLine::Top,
-      n if n == bubble_num_lines - 1 => BubbleVerticalLine::Bottom,
-      _ => BubbleVerticalLine::Middle,
-    };
+        if w != '\n' && line_len + 1 < max_bubble_width {
+          lines.last_mut().unwrap().push(w);
+          line_len += 1;
+        } else {
+          lines.push(String::new());
+          line_len = 0;
+        }
+      }
+      Some(c) => {
+        word.push(c);
+        word_len += 1;
+        if word_len == max_bubble_width {
+          lines.last_mut().unwrap().push_str(&word);
+          lines.push(String::new());
+          word.clear();
+          line_len = 0;
+          word_len = 0;
+        } else if line_len + word_len == max_bubble_width {
+          lines.push(String::new());
+          lines.last_mut().unwrap().push_str(&word);
+          word.clear();
+          line_len = word_len;
+          word_len = 0;
+        }
+      }
+      None => {
+        if line_len == 0 && word_len == 0 {
+          break;
+        }
 
-    buf.push_str(line_type.get_start());
-    let line: String = chars.by_ref().take(bubble_width).collect();
+        lines.last_mut().unwrap().push_str(&word);
+        word.clear();
+        line_len += word_len;
+        word_len = 0;
+        break;
+      }
+    }
+  }
+
+  for line in lines {
     buf.push_str(&line);
-    buf.push_str(line_type.get_end());
     buf.push('\n');
   }
 
+  // Top line
+  /*buf.push(' ');
+  buf.push_str(&"_".repeat(max_bubble_width + 2));
+  buf.push(' ');
+  buf.push('\n');
+
   // Bottom "line"
   buf.push(' ');
-  buf.push_str(&"-".repeat(bubble_width + 2));
-  buf.push(' ');
+  buf.push_str(&"-".repeat(max_bubble_width + 2));
+  buf.push(' ');*/
 }
 
 pub fn say(text: &str, options: &CatsayOptions) -> String {
@@ -79,7 +117,7 @@ pub fn say(text: &str, options: &CatsayOptions) -> String {
   };
 
   let mut bubble = String::new();
-  write_bubble(text, &mut bubble, bubble_width);
+  write_bubble(text, &mut bubble, options);
 
   let cat = match &options.cat {
     CatChoice::Choice(cat) => cat,
