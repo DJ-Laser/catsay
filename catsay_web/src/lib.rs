@@ -15,9 +15,9 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 const PROMPT: &str = "$ ";
 
-fn prompt(term: &Terminal) {
-  term.writeln("");
+fn prompt(text: &str, term: &Terminal) {
   term.write(PROMPT);
+  term.write(text);
 }
 
 fn setup_terminal() -> Result<Terminal, JsValue> {
@@ -48,7 +48,8 @@ fn setup_terminal() -> Result<Terminal, JsValue> {
   terminal
     .writeln("Here you can use the catsay command, just like if you installed the cargo package");
 
-  prompt(&terminal);
+  terminal.writeln("");
+  prompt("", &terminal);
 
   return Ok(terminal);
 }
@@ -78,6 +79,7 @@ const KEY_C: u32 = 67;
 
 const CURSOR_LEFT: &str = "\x1b[D";
 const CURSOR_RIGHT: &str = "\x1b[C";
+const CLEAR_LINE: &str = "\x1b[2K\r";
 
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
@@ -85,6 +87,7 @@ pub fn main() -> Result<(), JsValue> {
 
   let terminal = setup_terminal()?;
   let mut line = String::new();
+  let mut line_len = 0;
   let mut cursor_col = 0;
 
   let term: Terminal = terminal.clone().dyn_into()?;
@@ -97,16 +100,11 @@ pub fn main() -> Result<(), JsValue> {
           term.writeln("");
           run_command(&line, &term);
           line.clear();
+          line_len = 0;
           cursor_col = 0;
         }
-        prompt(&term);
-      }
-      KEY_BACKSPACE => {
-        if cursor_col > 0 {
-          term.write("\u{0008} \u{0008}");
-          line.pop();
-          cursor_col -= 1;
-        }
+        term.writeln("");
+        prompt("", &term);
       }
       KEY_LEFT_ARROW => {
         if cursor_col > 0 {
@@ -115,16 +113,33 @@ pub fn main() -> Result<(), JsValue> {
         }
       }
       KEY_RIGHT_ARROW => {
-        if cursor_col < line.len() {
+        if cursor_col < line_len {
           term.write(CURSOR_RIGHT);
           cursor_col += 1;
         }
       }
       KEY_C if event.ctrl_key() => {
-        term.write("^C");
-        prompt(&term);
+        term.writeln("^C");
+        prompt("", &term);
         line.clear();
+        line_len = 0;
         cursor_col = 0;
+      }
+      KEY_BACKSPACE => {
+        let res = line.char_indices().nth(cursor_col);
+        if cursor_col > 0 {
+          if let Some((pos, _)) = res {
+            line.remove(pos);
+            line_len -= 1;
+            cursor_col -= 1;
+
+            term.write(CLEAR_LINE);
+            prompt(
+              &(line.clone() + &CURSOR_LEFT.repeat(line_len - cursor_col)),
+              &term,
+            );
+          }
+        }
       }
       _ => {
         if event.key().len() == 1
@@ -133,9 +148,22 @@ pub fn main() -> Result<(), JsValue> {
           && !event.ctrl_key()
           && !event.meta_key()
         {
-          term.write(&event.key());
-          line.push_str(&e.key());
-          cursor_col += 1;
+          let res = line.char_indices().nth(cursor_col);
+          let key_len = e.key().chars().count();
+          if let Some((pos, _)) = res {
+            line.insert_str(pos, &e.key());
+          } else {
+            line.push_str(&e.key());
+          }
+
+          line_len += key_len;
+          cursor_col += key_len;
+
+          term.write(CLEAR_LINE);
+          prompt(
+            &(line.clone() + &CURSOR_LEFT.repeat(line_len - cursor_col)),
+            &term,
+          );
         }
       }
     }
