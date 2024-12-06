@@ -165,13 +165,8 @@ fn catsay(terminal: &Terminal, line: &str) {
       return;
     }
   };
-  match cli::main(
-    options,
-    true,
-    StdinNotSupported,
-    terminal_io.clone(),
-    terminal_io,
-  ) {
+
+  match cli::main(options, StdinNotSupported, terminal_io.clone(), terminal_io) {
     Ok(()) => return,
     Err(_) => return,
   };

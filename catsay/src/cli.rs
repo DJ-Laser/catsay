@@ -3,7 +3,7 @@ pub mod parser;
 use std::io::{self, Read, Write};
 use std::string::FromUtf8Error;
 
-use crate::{get_help_text, say};
+use crate::say;
 use parser::Cli;
 
 #[derive(Debug)]
@@ -24,13 +24,7 @@ impl From<FromUtf8Error> for CliError {
   }
 }
 
-pub fn main<I, O, E>(
-  args: Cli,
-  is_terminal: bool,
-  mut stdin: I,
-  mut stdout: O,
-  mut _stderr: E,
-) -> Result<(), CliError>
+pub fn main<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut _stderr: E) -> Result<(), CliError>
 where
   I: Read,
   O: Write,
@@ -38,12 +32,7 @@ where
 {
   let options = Default::default();
 
-  if args.text.len() == 0 {
-    if is_terminal {
-      stdout.write(get_help_text().as_bytes())?;
-      return Ok(());
-    }
-
+  if args.action.say.use_stdin {
     let mut buf: Vec<u8> = Vec::new();
     stdin.read_to_end(&mut buf)?;
 
@@ -53,7 +42,7 @@ where
     return Ok(());
   }
 
-  let text: String = args.text.join(" ");
+  let text: String = args.action.say.args.join(" ");
   stdout.write(say(&text, &options).as_bytes())?;
 
   Ok(())
