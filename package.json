@@ -9,7 +9,7 @@
     "@xterm/xterm": "^5.5.0",
     "xterm-addon-fit": "npm:@xterm/addon-fit@^0.10.0",
     "xterm": "npm:@xterm/xterm@^5.5.0",
-    "catsay_web": "file:./catsay_web/pkg"
+    "catsay_web": "file:./djlaser_catsay_web/pkg"
   },
   "devDependencies": {
     "vite": "^5.1.8",
@@ -17,7 +17,7 @@
     "vite-plugin-wasm": "^3.3.0"
   },
   "scripts": {
-    "wasm": "wasm-pack build ./catsay_web --target bundler",
+    "wasm": "wasm-pack build ./djlaser_catsay_web --target bundler",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

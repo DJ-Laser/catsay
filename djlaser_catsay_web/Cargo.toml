@@ -1,13 +1,18 @@
 [package]
-name = "catsay_web"
+name = "djlaser_catsay_web"
 version = "0.1.0"
+authors.workspace = true
+description.workspace = true
 edition.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-catsay = { path = "../catsay", features = ["cli"] } 
+djlaser_catsay = { path = "../djlaser_catsay/", features = ["cli"] } 
 js-sys = "0.3.39"
 wasm-bindgen = "0.2.62"
 xterm-js-rs = { version = "0.1.0", features = ["xterm-addon-fit"] }

@@ -7,7 +7,7 @@ use wasm_bindgen::JsCast;
 use xterm_js_rs::addons::fit::FitAddon;
 use xterm_js_rs::{OnKeyEvent, Terminal, TerminalOptions, Theme};
 
-use catsay::cli::{self, parser::Cli};
+use djlaser_catsay::cli::{self, parser::Cli};
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]

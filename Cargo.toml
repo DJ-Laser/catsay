@@ -1,6 +1,11 @@
 [workspace]
-members = ["catsay", "catsay_web"]
+members = ["djlaser_catsay", "djlaser_catsay_web"]
 resolver = "2"
 
 [workspace.package]
 edition = "2021"
+authors =  ["DJ_Laser"]
+description = "An easy to use cowsay tool that prints ascii cats"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/DJ-Laser/catsay"
