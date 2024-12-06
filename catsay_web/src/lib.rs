@@ -1,7 +1,6 @@
 mod io;
 
 use clap::Parser;
-use io::StdinNotSupported;
 use io::TerminalIo;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -166,7 +165,12 @@ fn catsay(terminal: &Terminal, line: &str) {
     }
   };
 
-  match cli::main(options, StdinNotSupported, terminal_io.clone(), terminal_io) {
+  match cli::main(
+    options,
+    terminal_io.clone(),
+    terminal_io.clone(),
+    terminal_io,
+  ) {
     Ok(()) => return,
     Err(_) => return,
   };

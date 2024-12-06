@@ -13,6 +13,10 @@ impl<'a> TerminalIo<'a> {
 
   pub fn write_str(&self, string: &str) {
     for line in string.split('\n') {
+      if line.len() == 0 {
+        continue;
+      }
+
       self.0.writeln(line);
     }
   }
@@ -34,18 +38,19 @@ impl<'a> Write for TerminalIo<'a> {
   }
 }
 
-#[derive(Debug)]
-pub struct StdinNotSupported;
-
-impl Read for StdinNotSupported {
+impl<'a> Read for TerminalIo<'a> {
   fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
+    self.0.writeln(&format!("{}", StdinNotSupported));
     io::Result::Err(Error::new(ErrorKind::BrokenPipe, StdinNotSupported))
   }
 }
 
+#[derive(Debug)]
+pub struct StdinNotSupported;
+
 impl Display for StdinNotSupported {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "Standard input not supported in web mode")
+    write!(f, "Standard input not supported in web mode, sorry")
   }
 }
 
