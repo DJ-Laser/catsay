@@ -72,12 +72,13 @@ where
     stdout.write(get_credits().as_bytes())?;
   } else if args.action.list_cats {
     for cat in Cat::CATS {
-      stdout.write(cat.credit.as_bytes())?;
-      stdout.write("\n".as_bytes())?;
+      write!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
+      write!(stdout, "\n")?;
     }
   } else if args.action.show_cats {
     for cat in Cat::CATS {
-      stdout.write(say(&cat.credit, &options.clone().with_cat(cat)).as_bytes())?;
+      let text = format!("--cat {}:\n{}", cat.name, cat.credit);
+      stdout.write(say(&text, &options.clone().with_cat(cat)).as_bytes())?;
       stdout.write("\n".as_bytes())?;
     }
   } else if let Some(name) = args.action.show_cat {
