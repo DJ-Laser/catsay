@@ -1,4 +1,4 @@
-use std::str::{self, from_utf8};
+use std::str::{self};
 
 pub struct Cat<'a> {
   pub name: &'a str,
@@ -10,8 +10,7 @@ pub struct Cat<'a> {
 impl<'a> Cat<'a> {
   pub const CATS: &'static [Cat<'static>; 6] = &CATS;
   pub fn get_art(&self) -> &str {
-    let bytes = &self.art.as_bytes()[1..];
-    return from_utf8(bytes).expect("Should be able to remove the leading newline");
+    return &self.art[1..];
   }
 
   pub fn get_cat(name: &str) -> Option<&'static Cat<'static>> {
