@@ -107,7 +107,10 @@ where
   let io_error = match error {
     CliError::IoError(err) => err,
     CliError::CatNotFound(name) => {
-      let res = writeln!(stderr, r#"No cat "{name}" available, sorry"#);
+      let res = writeln!(
+        stderr,
+        r#"No cat "{name}" available. Use --list-cats or --show-cats to see available cats"#
+      );
       match res {
         Ok(()) => return ExitCode::from(2),
         Err(io_error) => io_error,
