@@ -1,13 +1,14 @@
 mod io;
 
 use clap::Parser;
-use io::TerminalIo;
+use std::io::Write;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use xterm_js_rs::addons::fit::FitAddon;
 use xterm_js_rs::{OnKeyEvent, Terminal, TerminalOptions, Theme};
 
 use djlaser_catsay::cli::{self, parser::Cli};
+use io::TerminalIo;
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -181,12 +182,12 @@ pub fn main() -> Result<(), JsValue> {
 
 fn catsay(terminal: &Terminal, line: &str) {
   let args = line.split(' ');
-  let terminal_io = TerminalIo::new(terminal);
+  let mut terminal_io = TerminalIo::new(terminal);
 
   let options = match Cli::try_parse_from(args) {
     Ok(cli) => cli,
     Err(error) => {
-      terminal_io.write_str(&format!("{}", error));
+      write!(terminal_io, "{}", error).expect("TerminalIo should never fail to write");
       return;
     }
   };

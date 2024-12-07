@@ -30,6 +30,14 @@ impl<'a> Default for CatsayOptions<'a> {
 }
 
 impl<'a> CatsayOptions<'a> {
+  pub fn set_random_cat(&mut self) {
+    self.cat = CatChoice::Random;
+  }
+
+  pub fn set_cat(&mut self, cat: &'a Cat<'a>) {
+    self.cat = CatChoice::Choice(cat);
+  }
+
   pub fn with_max_bubble_width(mut self, width: Option<usize>) -> Self {
     self.max_bubble_width = width;
     return self;
@@ -46,12 +54,12 @@ impl<'a> CatsayOptions<'a> {
   }
 
   pub fn with_random_cat(mut self) -> Self {
-    self.cat = CatChoice::Random;
+    self.set_random_cat();
     return self;
   }
 
   pub fn with_cat(mut self, cat: &'a Cat<'a>) -> Self {
-    self.cat = CatChoice::Choice(cat);
+    self.set_cat(cat);
     return self;
   }
 

@@ -11,7 +11,7 @@ impl<'a> TerminalIo<'a> {
     TerminalIo(terminal)
   }
 
-  pub fn write_str(&self, string: &str) {
+  pub fn write_str(&mut self, string: &str) {
     for line in string.split('\n') {
       if line.len() == 0 {
         continue;

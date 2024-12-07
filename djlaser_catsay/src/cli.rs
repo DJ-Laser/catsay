@@ -45,7 +45,7 @@ pub fn try_get_cat<B: Write>(
 ) -> Result<&'static Cat<'static>, CliError> {
   let cat = Cat::get_cat(name);
   if cat.is_none() {
-    stderr.write(&format!(r#"No cat "{name}"" available, sorry"#).as_bytes())?;
+    write!(stderr, r#"No cat "{name}" available, sorry"#)?;
     process::exit(1);
   }
 
@@ -69,7 +69,7 @@ where
   }
 
   if args.action.credits {
-    stdout.write(get_credits().as_bytes())?;
+    write!(stdout, "{}", get_credits())?;
   } else if args.action.list_cats {
     for cat in Cat::CATS {
       write!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
@@ -78,12 +78,13 @@ where
   } else if args.action.show_cats {
     for cat in Cat::CATS {
       let text = format!("--cat {}:\n{}", cat.name, cat.credit);
-      stdout.write(say(&text, &options.clone().with_cat(cat)).as_bytes())?;
-      stdout.write("\n".as_bytes())?;
+      options.set_cat(cat);
+      write!(stdout, "{}\n", say(&text, &options))?;
     }
   } else if let Some(name) = args.action.show_cat {
     let cat = try_get_cat(&name, &mut stderr)?;
-    stdout.write(say(&cat.credit, &options.clone().with_cat(cat)).as_bytes())?;
+    options.set_cat(cat);
+    write!(stdout, "{}", say(&cat.credit, &options))?;
   } else {
     let text = if args.action.use_stdin {
       let mut buf: Vec<u8> = Vec::new();
@@ -93,7 +94,7 @@ where
       args.action.say.join(" ")
     };
 
-    stdout.write(say(&text, &options).as_bytes())?;
+    write!(stdout, "{}", say(&text, &options))?;
   }
 
   Ok(())
