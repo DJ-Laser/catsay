@@ -192,13 +192,10 @@ fn catsay(terminal: &Terminal, line: &str) {
     }
   };
 
-  match cli::main(
+  cli::main(
     options,
     terminal_io.clone(),
     terminal_io.clone(),
     terminal_io,
-  ) {
-    Ok(()) => return,
-    Err(_) => return,
-  };
+  );
 }

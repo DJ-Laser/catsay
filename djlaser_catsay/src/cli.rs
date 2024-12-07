@@ -1,16 +1,14 @@
 pub mod parser;
 
 use std::io::{self, Read, Write};
-use std::process;
-use std::string::FromUtf8Error;
+use std::process::{self, ExitCode};
 
 use crate::{say, Cat, CatChoice, CatsayOptions};
 use parser::Cli;
 
 #[derive(Debug)]
-pub enum CliError {
+enum CliError {
   IoError(io::Error),
-  FromUtf8Error(FromUtf8Error),
 }
 
 impl From<io::Error> for CliError {
@@ -19,15 +17,9 @@ impl From<io::Error> for CliError {
   }
 }
 
-impl From<FromUtf8Error> for CliError {
-  fn from(error: FromUtf8Error) -> CliError {
-    CliError::FromUtf8Error(error)
-  }
-}
-
 const CREDIT: &str = "\
 Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats
-Catsay Programmed by DJ_Laser";
+Catsay programmed by DJ_Laser";
 
 pub fn get_credits() -> String {
   let mut credits = String::from(CREDIT);
@@ -39,10 +31,7 @@ pub fn get_credits() -> String {
   return credits;
 }
 
-pub fn try_get_cat<B: Write>(
-  name: &str,
-  stderr: &mut B,
-) -> Result<&'static Cat<'static>, CliError> {
+fn try_get_cat<B: Write>(name: &str, stderr: &mut B) -> Result<&'static Cat<'static>, CliError> {
   let cat = Cat::get_cat(name);
   if cat.is_none() {
     write!(stderr, r#"No cat "{name}" available, sorry"#)?;
@@ -52,7 +41,7 @@ pub fn try_get_cat<B: Write>(
   Ok(cat.unwrap())
 }
 
-pub fn main<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut stderr: E) -> Result<(), CliError>
+fn catsay<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut stderr: E) -> Result<(), CliError>
 where
   I: Read,
   O: Write,
@@ -87,9 +76,9 @@ where
     write!(stdout, "{}", say(&cat.credit, &options))?;
   } else {
     let text = if args.action.use_stdin {
-      let mut buf: Vec<u8> = Vec::new();
-      stdin.read_to_end(&mut buf)?;
-      String::from_utf8(buf)?
+      let mut buf: String = String::new();
+      stdin.read_to_string(&mut buf)?;
+      buf
     } else {
       args.action.say.join(" ")
     };
@@ -98,4 +87,18 @@ where
   }
 
   Ok(())
+}
+
+// Error handling wrapper so platforms don't have to
+pub fn main<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut stderr: E) -> ExitCode
+where
+  I: Read,
+  O: Write,
+  E: Write,
+{
+  let error = match catsay(args, stdin, stdout, stderr) {
+    Ok(()) => return ExitCode::SUCCESS,
+    Err(err) => err,
+  };
+  panic!()
 }
