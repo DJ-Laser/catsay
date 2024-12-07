@@ -107,7 +107,7 @@ where
   let io_error = match error {
     CliError::IoError(err) => err,
     CliError::CatNotFound(name) => {
-      let res = write!(stderr, r#"No cat "{name}" available, sorry"#);
+      let res = writeln!(stderr, r#"No cat "{name}" available, sorry"#);
       match res {
         Ok(()) => return ExitCode::from(2),
         Err(io_error) => io_error,
@@ -116,7 +116,7 @@ where
   };
 
   // Ignore failure to write, that might be what caused the error
-  let _ = write!(stderr, "Error: {}", io_error);
+  let _ = writeln!(stderr, "Error: {}", io_error);
   match io_error.kind() {
     ErrorKind::InvalidData => ExitCode::from(65),
     _ => ExitCode::from(1),

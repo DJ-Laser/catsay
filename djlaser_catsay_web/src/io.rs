@@ -12,12 +12,17 @@ impl<'a> TerminalIo<'a> {
   }
 
   pub fn write_str(&mut self, string: &str) {
-    for line in string.split('\n') {
-      if line.len() == 0 {
-        continue;
+    let mut last_write_idx: usize = 0;
+    for (idx, c) in string.char_indices() {
+      if c == '\n' {
+        self.0.writeln(&string[last_write_idx..idx]);
+        // '\n' is a single byte, so next char is at idx + 1
+        last_write_idx = idx + 1;
       }
+    }
 
-      self.0.writeln(line);
+    if last_write_idx < string.len() {
+      self.0.write(&string[last_write_idx..string.len()]);
     }
   }
 }
