@@ -61,14 +61,13 @@ where
     write!(stdout, "{}", get_credits())?;
   } else if args.action.list_cats {
     for cat in Cat::CATS {
-      write!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
-      write!(stdout, "\n")?;
+      writeln!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
     }
   } else if args.action.show_cats {
     for cat in Cat::CATS {
       let text = format!("--cat {}:\n{}", cat.name, cat.credit);
       options.set_cat(cat);
-      write!(stdout, "{}\n", say(&text, &options))?;
+      writeln!(stdout, "{}", say(&text, &options))?;
     }
   } else if let Some(name) = args.action.show_cat {
     let cat = try_get_cat(&name, &mut stderr)?;
