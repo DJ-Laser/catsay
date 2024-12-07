@@ -1,18 +1,18 @@
 pub mod parser;
 
-use std::io::{self, Read, Write};
-use std::process::{self, ExitCode};
+use std::io::{Error, ErrorKind, Read, Write};
+use std::process::ExitCode;
 
 use crate::{say, Cat, CatChoice, CatsayOptions};
 use parser::Cli;
 
-#[derive(Debug)]
 enum CliError {
-  IoError(io::Error),
+  IoError(Error),
+  CatNotFound(String),
 }
 
-impl From<io::Error> for CliError {
-  fn from(error: io::Error) -> CliError {
+impl From<Error> for CliError {
+  fn from(error: Error) -> CliError {
     CliError::IoError(error)
   }
 }
@@ -31,17 +31,21 @@ pub fn get_credits() -> String {
   return credits;
 }
 
-fn try_get_cat<B: Write>(name: &str, stderr: &mut B) -> Result<&'static Cat<'static>, CliError> {
-  let cat = Cat::get_cat(name);
+fn try_get_cat(name: String) -> Result<&'static Cat<'static>, CliError> {
+  let cat = Cat::get_cat(&name);
   if cat.is_none() {
-    write!(stderr, r#"No cat "{name}" available, sorry"#)?;
-    process::exit(1);
+    return Err(CliError::CatNotFound(name));
   }
 
   Ok(cat.unwrap())
 }
 
-fn catsay<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut stderr: E) -> Result<(), CliError>
+fn catsay<I, O, E>(
+  args: Cli,
+  stdin: &mut I,
+  stdout: &mut O,
+  _stderr: &mut E,
+) -> Result<(), CliError>
 where
   I: Read,
   O: Write,
@@ -54,7 +58,7 @@ where
   }
 
   if let Some(name) = args.cat {
-    options.cat = CatChoice::Choice(try_get_cat(&name, &mut stderr)?);
+    options.cat = CatChoice::Choice(try_get_cat(name)?);
   }
 
   if args.action.credits {
@@ -70,7 +74,7 @@ where
       writeln!(stdout, "{}", say(&text, &options))?;
     }
   } else if let Some(name) = args.action.show_cat {
-    let cat = try_get_cat(&name, &mut stderr)?;
+    let cat = try_get_cat(name)?;
     options.set_cat(cat);
     write!(stdout, "{}", say(&cat.credit, &options))?;
   } else {
@@ -89,7 +93,7 @@ where
 }
 
 // Error handling wrapper so platforms don't have to
-pub fn main<I, O, E>(args: Cli, mut stdin: I, mut stdout: O, mut stderr: E) -> ExitCode
+pub fn main<I, O, E>(args: Cli, stdin: &mut I, stdout: &mut O, stderr: &mut E) -> ExitCode
 where
   I: Read,
   O: Write,
@@ -99,5 +103,22 @@ where
     Ok(()) => return ExitCode::SUCCESS,
     Err(err) => err,
   };
-  panic!()
+
+  let io_error = match error {
+    CliError::IoError(err) => err,
+    CliError::CatNotFound(name) => {
+      let res = write!(stderr, r#"No cat "{name}" available, sorry"#);
+      match res {
+        Ok(()) => return ExitCode::from(2),
+        Err(io_error) => io_error,
+      }
+    }
+  };
+
+  // Ignore failure to write, that might be what caused the error
+  let _ = write!(stderr, "Error: {}", io_error);
+  match io_error.kind() {
+    ErrorKind::InvalidData => ExitCode::from(65),
+    _ => ExitCode::from(1),
+  }
 }

@@ -7,5 +7,10 @@ use std::{
 
 pub fn main() -> ExitCode {
   let args = Cli::parse();
-  return cli::main(args, stdin().lock(), stdout().lock(), stderr().lock());
+  return cli::main(
+    args,
+    &mut stdin().lock(),
+    &mut stdout().lock(),
+    &mut stderr().lock(),
+  );
 }

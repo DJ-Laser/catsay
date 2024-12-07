@@ -194,8 +194,8 @@ fn catsay(terminal: &Terminal, line: &str) {
 
   cli::main(
     options,
-    terminal_io.clone(),
-    terminal_io.clone(),
-    terminal_io,
+    &mut terminal_io.clone(),
+    &mut terminal_io.clone(),
+    &mut terminal_io,
   );
 }
