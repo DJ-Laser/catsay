@@ -62,7 +62,7 @@ where
   }
 
   if args.action.credits {
-    write!(stdout, "{}", get_credits())?;
+    writeln!(stdout, "{}", get_credits())?;
   } else if args.action.list_cats {
     for cat in Cat::CATS {
       writeln!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
@@ -76,7 +76,7 @@ where
   } else if let Some(name) = args.action.show_cat {
     let cat = try_get_cat(name)?;
     options.set_cat(cat);
-    write!(stdout, "{}", say(&cat.credit, &options))?;
+    writeln!(stdout, "{}", say(&cat.credit, &options))?;
   } else {
     let text = if args.action.use_stdin {
       let mut buf: String = String::new();
@@ -86,7 +86,7 @@ where
       args.action.say.join(" ")
     };
 
-    write!(stdout, "{}", say(&text, &options))?;
+    writeln!(stdout, "{}", say(&text, &options))?;
   }
 
   Ok(())
