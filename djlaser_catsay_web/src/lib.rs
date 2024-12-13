@@ -48,6 +48,8 @@ fn setup_terminal() -> Result<Terminal, JsValue> {
   terminal.writeln("Welcome to catsay web!");
   terminal
     .writeln("Here you can use the catsay command, just like if you installed the cargo package");
+  terminal
+    .writeln(r#"Type "catsay <text>" to try it out, or "catsay --help" for advanced usage instructions"#);
 
   terminal.writeln("");
   prompt("", &terminal);
