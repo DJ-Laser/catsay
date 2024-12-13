@@ -63,6 +63,14 @@ fn run_command(line: &str, terminal: &Terminal) {
   match command {
     "catsay" => catsay(&terminal, &line),
     "clear" => terminal.clear(),
+    "help" => {
+      let commands = ["catsay - Print ascii cats!", "clear - Clear the terminal", "help - List availible commands"];
+      terminal.writeln("Available commands:");
+      for command in commands {
+        terminal.write(" - ");
+        terminal.writeln(command);
+      }
+    }
     _ => {
       terminal.writeln(&format!(
         "Command: {} not supported, please use the catsay or clear commands",
