@@ -24,7 +24,7 @@ pub struct Cli {
 #[derive(Args)]
 #[group(required = true, multiple = false)]
 pub struct Action {
-  /// Show the credits catsay
+  /// Show the credits for catsay
   #[arg(long, display_order = 10)]
   pub credits: bool,
 
