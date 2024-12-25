@@ -3,6 +3,13 @@ use std::io::{self, Error, ErrorKind, Read, Write};
 use std::str;
 use xterm_js_rs::Terminal;
 
+pub fn dummy_file_reader(_file: &str) -> Result<String, Error> {
+  Err(Error::new(
+    ErrorKind::Unsupported,
+    "Reading files is not supported on the web demo",
+  ))
+}
+
 #[derive(Clone)]
 pub struct TerminalIo<'a>(&'a Terminal);
 

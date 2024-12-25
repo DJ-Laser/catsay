@@ -48,8 +48,9 @@ fn setup_terminal() -> Result<Terminal, JsValue> {
   terminal.writeln("Welcome to catsay web!");
   terminal
     .writeln("Here you can use the catsay command, just like if you installed the cargo package");
-  terminal
-    .writeln(r#"Type "catsay <text>" to try it out, or "catsay --help" for advanced usage instructions"#);
+  terminal.writeln(
+    r#"Type "catsay <text>" to try it out, or "catsay --help" for advanced usage instructions"#,
+  );
 
   terminal.writeln("");
   prompt("", &terminal);
@@ -64,7 +65,11 @@ fn run_command(line: &str, terminal: &Terminal) {
     "catsay" => catsay(&terminal, &line),
     "clear" => terminal.clear(),
     "help" => {
-      let commands = ["catsay - Print ascii cats!", "clear - Clear the terminal", "help - List availible commands"];
+      let commands = [
+        "catsay - Print ascii cats!",
+        "clear - Clear the terminal",
+        "help - List availible commands",
+      ];
       terminal.writeln("Available commands:");
       for command in commands {
         terminal.write(" - ");
@@ -207,5 +212,6 @@ fn catsay(terminal: &Terminal, line: &str) {
     &mut terminal_io.clone(),
     &mut terminal_io.clone(),
     &mut terminal_io,
+    io::dummy_file_reader,
   );
 }

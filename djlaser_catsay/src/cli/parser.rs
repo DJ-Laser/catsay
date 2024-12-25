@@ -16,6 +16,12 @@ pub struct Cli {
   #[arg(short, long, requires = "random_cat")]
   pub cat: Option<String>,
 
+  /// The cat file to load from.
+  /// Can be any file with ascii text but the .cat extension is standard
+  #[arg(display_order = 0)]
+  #[arg(short, long, requires = "random_cat", conflicts_with = "cat")]
+  pub file: Option<String>,
+
   /// Padding in spaces before the ascii image.
   #[arg(long, display_order = 0)]
   pub padding: Option<usize>,
