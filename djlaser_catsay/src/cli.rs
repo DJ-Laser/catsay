@@ -49,10 +49,8 @@ where
     _ => CliError::CatFileNotFound(file.to_string(), error),
   })?;
 
-  // get_art removes a leading newline
-  let simple_text = " ".to_string() + &text;
   // TODO: Do parsing of complex catfiles else return simple_text
-  Ok(simple_text)
+  Ok(text)
 }
 
 fn catsay<I, O, E, F>(

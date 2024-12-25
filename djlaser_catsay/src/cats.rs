@@ -10,7 +10,11 @@ pub struct Cat<'a> {
 impl<'a> Cat<'a> {
   pub const CATS: &'static [Cat<'static>; 6] = &CATS;
   pub fn get_art(&self) -> &str {
-    return &self.art[1..];
+    if matches!(self.art.chars().next(), Some('\n')) {
+      &self.art[1..]
+    } else {
+      &self.art
+    }
   }
 
   pub fn get_cat(name: &str) -> Option<&'static Cat<'static>> {
