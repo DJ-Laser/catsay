@@ -3,7 +3,7 @@ use clap::{Args, Parser};
 
 #[derive(Parser)]
 #[command(name = "catsay")]
-#[command(before_help = super::CREDIT)]
+#[command(before_help = crate::CREDIT)]
 #[command(arg_required_else_help = true)]
 #[command(version, about, long_about = None)]
 pub struct Cli {
@@ -43,6 +43,11 @@ pub struct Action {
   #[arg(display_order = 0)]
   #[arg(long, value_name = "CAT")]
   pub show_cat: Option<String>,
+
+  /// Display a single cat image from a file.
+  #[arg(display_order = 0)]
+  #[arg(long, value_name = "CAT")]
+  pub show_cat_file: Option<String>,
 
   /// Display all of the available cat images.
   #[arg(display_order = 0)]

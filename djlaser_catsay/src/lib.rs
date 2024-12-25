@@ -9,6 +9,20 @@ pub use options::*;
 use fastrand;
 use std::{cmp::max, usize};
 
+const CREDIT: &str = "\
+Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats
+Catsay programmed by DJ_Laser";
+
+pub fn get_credits() -> String {
+  let mut credits = String::from(CREDIT);
+  for cat in Cat::CATS {
+    credits.push('\n');
+    credits.push_str(&cat.credit);
+  }
+
+  return credits;
+}
+
 enum BubbleVerticalLine {
   Single,
   Top,

@@ -1,10 +1,13 @@
+mod actions;
 pub mod parser;
+mod util;
 
 use std::io::{Error, ErrorKind, Read, Write};
 use std::process::ExitCode;
 
-use crate::{say, Cat, CatChoice, CatsayOptions};
+use crate::{Cat, CatsayOptions};
 use parser::Cli;
+use util::{try_get_cat, try_parse_cat_file};
 
 enum CliError {
   IoError(Error),
@@ -16,41 +19,6 @@ impl From<Error> for CliError {
   fn from(error: Error) -> CliError {
     CliError::IoError(error)
   }
-}
-
-const CREDIT: &str = "\
-Art sourced from ASCII Art Archive https://www.asciiart.eu/animals/cats
-Catsay programmed by DJ_Laser";
-
-pub fn get_credits() -> String {
-  let mut credits = String::from(CREDIT);
-  for cat in Cat::CATS {
-    credits.push('\n');
-    credits.push_str(&cat.credit);
-  }
-
-  return credits;
-}
-
-fn try_get_cat(name: String) -> Result<&'static Cat<'static>, CliError> {
-  let cat = Cat::get_cat(&name);
-  if cat.is_none() {
-    return Err(CliError::CatNotFound(name));
-  }
-
-  Ok(cat.unwrap())
-}
-
-fn try_parse_cat_file<F>(file: &str, read_to_string: F) -> Result<String, CliError>
-where
-  for<'f> F: Fn(&'f str) -> Result<String, Error>,
-{
-  let text = read_to_string(file).map_err(|error| match error {
-    _ => CliError::CatFileNotFound(file.to_string(), error),
-  })?;
-
-  // TODO: Do parsing of complex catfiles else return simple_text
-  Ok(text)
 }
 
 fn catsay<I, O, E, F>(
@@ -72,8 +40,34 @@ where
     options.left_padding = padding;
   }
 
-  if let Some(name) = args.cat {
-    options.cat = CatChoice::Choice(try_get_cat(name)?);
+  if let Some(ref path) = args.action.show_cat_file {
+    let cat_text = try_parse_cat_file(&path, read_to_string)?;
+    let file_cat = Cat {
+      name: "Unknown",
+      credit: "Unknown Cat by Unknown Artist",
+      art: &cat_text,
+    };
+
+    options.set_cat(&file_cat);
+    return actions::show_cat(&file_cat.credit, options, stdout);
+  }
+
+  if let Some(name) = args.action.show_cat {
+    let cat = try_get_cat(name)?;
+    options.set_cat(cat);
+    return actions::show_cat(&cat.credit, options, stdout);
+  }
+
+  if args.action.list_cats {
+    return actions::list_cats(stdout);
+  }
+
+  if args.action.show_cats {
+    return actions::show_cats(options, stdout);
+  }
+
+  if args.action.credits {
+    return actions::credits(stdout);
   }
 
   let cat_text;
@@ -83,42 +77,25 @@ where
     art: "",
   };
 
-  if let Some(path) = args.file {
+  if let Some(name) = args.cat {
+    options.set_cat(try_get_cat(name)?);
+  } else if let Some(path) = args.file {
     cat_text = try_parse_cat_file(&path, read_to_string)?;
     file_cat.art = &cat_text;
 
-    options.cat = CatChoice::Choice(&file_cat);
+    options.set_cat(&file_cat);
   }
 
-  if args.action.credits {
-    writeln!(stdout, "{}", get_credits())?;
-  } else if args.action.list_cats {
-    for cat in Cat::CATS {
-      writeln!(stdout, "--cat {}: {}", cat.name, cat.credit)?;
-    }
-  } else if args.action.show_cats {
-    for cat in Cat::CATS {
-      let text = format!("--cat {}:\n{}", cat.name, cat.credit);
-      options.set_cat(cat);
-      writeln!(stdout, "{}", say(&text, &options))?;
-    }
-  } else if let Some(name) = args.action.show_cat {
-    let cat = try_get_cat(name)?;
-    options.set_cat(cat);
-    writeln!(stdout, "{}", say(&cat.credit, &options))?;
+  // All other actions were false, default to catsaying
+  let text = if args.action.use_stdin {
+    let mut buf: String = String::new();
+    stdin.read_to_string(&mut buf)?;
+    buf
   } else {
-    let text = if args.action.use_stdin {
-      let mut buf: String = String::new();
-      stdin.read_to_string(&mut buf)?;
-      buf
-    } else {
-      args.action.say.join(" ")
-    };
+    args.action.say.join(" ")
+  };
 
-    writeln!(stdout, "{}", say(&text, &options))?;
-  }
-
-  Ok(())
+  return actions::catsay(&text, options, stdout);
 }
 
 // Error handling wrapper so platforms don't have to
