@@ -1,5 +1,10 @@
 use std::str::{self};
 
+mod owned;
+
+pub use owned::*;
+
+#[derive(Clone)]
 pub struct Cat<'a> {
   pub name: &'a str,
   pub credit: &'a str,
